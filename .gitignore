@@ -10,6 +10,9 @@ storage/*
 # Ignore Python byte code
 *.pyc
 
+# Ignore personal confs
+conf/*
+
 # Ignore certificates
 *.pem
 *.cert
@@ -27,6 +30,7 @@ docs/book/src/_build/
 # Ignore Django secret_key
 web/web/secret_key.py
 
+# Ignore VS crap
 cuckoo.v12.suo
 
 # Ignore yara rules
