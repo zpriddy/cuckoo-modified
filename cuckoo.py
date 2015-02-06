@@ -97,7 +97,7 @@ def cuckoo_clean():
                 conn.drop_database(mdb)
                 conn.disconnect()
             except:
-                print "Unable to drop MongoDB Database"
+                log.warning("Unable to drop MongoDB Database: %s", mdb)
 
     # Paths to clean
     paths = [
