@@ -84,20 +84,19 @@ def cuckoo_clean():
     db.clean_machines()
     db.drop()
 
-    # Check if MongoDB reporting is enabled and drop that if it is
+    # Check if MongoDB reporting is enabled and drop that if it is.
     cfg = Config("reporting")
-    if cfg.mongodb:
-        if cfg.mongodb.enabled:
-            from pymongo import MongoClient
-            host = cfg.mongodb.host
-            port = cfg.mongodb.port
-            mdb = cfg.mongodb.db
-            try:
-                conn = MongoClient(host, port)
-                conn.drop_database(mdb)
-                conn.disconnect()
-            except:
-                log.warning("Unable to drop MongoDB Database: %s", mdb)
+    if cfg.mongodb and cfg.mongodb.enabled:
+        from pymongo import MongoClient
+        host = cfg.mongodb.get("host", "127.0.0.1")
+        port = cfg.mongodb.get("port", 27017)
+        mdb = cfg.mongodb.get("db", "cuckoo")
+        try:
+            conn = MongoClient(host, port)
+            conn.drop_database(mdb)
+            conn.disconnect()
+        except:
+            log.warning("Unable to drop MongoDB database: %s", mdb)
 
     # Paths to clean
     paths = [
@@ -126,8 +125,6 @@ def cuckoo_clean():
                 os.unlink(path)
             except (IOError, OSError) as e:
                 log.warning("Error removing file %s: %s", path, e)
-
-    print "Remember to drop the database from mongodb or the django interface will display incorrect data."
 
 def cuckoo_main(max_analysis_count=0):
     cur_path = os.getcwd()
