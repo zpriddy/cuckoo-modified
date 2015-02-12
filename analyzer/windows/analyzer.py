@@ -349,9 +349,10 @@ class PipeHandler(Thread):
                                            suspended=suspended)
 
                             filepath = proc.get_filepath()
+                            is_64bit = proc.is_64bit()
                             filename = os.path.basename(filepath)
 
-                            log.info("Announced process name: %s pid: %d", filename, process_id)
+                            log.info("Announced %s process name: %s pid: %d", "64-bit" if is_64bit else "32-bit", filename, process_id)
 
                             if not protected_filename(filename):
                                 res = proc.inject(dll, filepath)
@@ -746,7 +747,8 @@ class Analyzer:
                 proc = Process(pid=pid)
                 if proc.is_alive():
                     try:
-                        proc.terminate()
+                        if not proc.is_critical():
+                            proc.terminate()
                     except:
                         continue
 
