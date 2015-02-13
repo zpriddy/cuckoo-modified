@@ -35,7 +35,6 @@ class Multiple_UA(Signature):
     def on_call(self, call, process):
         ua = self.get_argument(call, "Agent")
         if ua not in self.useragents:
-            print str(process)
             self.useragents.append(ua)
             self.procs.append((process["process_name"], ua))
 
