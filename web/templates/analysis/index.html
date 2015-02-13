@@ -19,14 +19,13 @@
                 <tr>
                     <th width="3%">ID</th>
                     <th width="12%">Timestamp</th>
-                    <th width="33%">Filename</th>
-                    <th width="15%">MD5</th>
+                    <th width="35%">Filename</th>
+                    <th width="18%">MD5</th>
                     <th width="5%">VT</th>
                     <th width="5%">SuriAlert</th>
                     <th width="5%">SuriHTTP</th>
                     <th width="5%">SuriTLS</th>
                     <th width="5%">SuriFiles</th>
-                    <th width="5%">Moloch</th>
                     <th width="7%" style="text-align: right;">Status</th>
                 </tr>
                 </thead>
@@ -86,13 +85,6 @@
                         <td>
                             {% if analysis.suri_file_cnt %}
                                 <span class="mono">{{analysis.suri_file_cnt}}</span>
-                            {% else %}
-                                  <span class="mono">None</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if analysis.moloch_url %}
-                                <a href={{analysis.moloch_url}} target="_blank"><span class="mono">MOLOCH</span></a>
                             {% else %}
                                   <span class="mono">None</span>
                             {% endif %}
