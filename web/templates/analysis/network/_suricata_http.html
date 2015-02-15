@@ -3,11 +3,31 @@
     {% if analysis.suricata.http %}
         <table class="table table-striped table-bordered">
             <tr>
-                <th>HTTP LOG</th>
+                <th>Timestamp</th>
+                <th>Source IP</th>
+                <th>Source Port</th>
+                <th>Destination IP</th>
+                <th>Destination Port</th>
+                <th>Method</th>
+                <th>Hostname</th>
+                <th>URI</th>
+                <th>Content Type</th>
+                <th>User Agent</th>
+                <th>Length</th>
             </tr>
-            {% for e in analysis.suricata.http %}
+            {% for http in analysis.suricata.http %}
             <tr>
-                <td>{{e}}</td>
+                <td>{{http.timestamp}}</td>
+                <td>{{http.srcip}}</td>
+                <td>{{http.srcport}}</td>
+                <td>{{http.dstip}}</td>
+                <td>{{http.dstport}}</td>
+                <td>{{http.method}}</td>
+                <td>{{http.hostname}}</td>
+                <td>{{http.uri}}</td>
+                <td>{{http.contenttype}}</td>
+                <td>{{http.ua}}</td>
+                <td>{{http.length}}</td>
             </tr>
             {% endfor %}
         </table>
