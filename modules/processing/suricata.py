@@ -136,10 +136,7 @@ class Suricata(Processing):
         if os.path.exists(SURICATA_EVE_LOG_FULL_PATH):
             with open(SURICATA_EVE_LOG_FULL_PATH, "r") as log:
                 data = log.read()
-            all_logs = dict()
-            all_logs["alert"] = list()
-            all_logs["http"] = list()
-            all_logs["tls"] = list()
+
             for line in data.splitlines():
                 parsed = json.loads(line)
                 if parsed["event_type"] == "alert":
