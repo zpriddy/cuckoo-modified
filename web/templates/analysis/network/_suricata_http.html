@@ -1,19 +1,19 @@
 <section id="suri_http">
     <h4>Suricata HTTP</h4>
     {% if analysis.suricata.http %}
-        <table class="table table-striped table-bordered">
+        <table class="table table-striped table-bordered" style="table-layout: fixed; width: 100%">
             <tr>
-                <th>Timestamp</th>
-                <th>Source IP</th>
-                <th>Source Port</th>
-                <th>Destination IP</th>
-                <th>Destination Port</th>
-                <th>Method</th>
-                <th>Hostname</th>
-                <th>URI</th>
-                <th>Content Type</th>
-                <th>User Agent</th>
-                <th>Length</th>
+                <th width="8%">Timestamp</th>
+                <th width="9%">Source IP</th>
+                <th width="7%">Source Port</th>
+                <th width="9%">Destination IP</th>
+                <th width="9%">Destination Port</th>
+                <th width="4%">Method</th>
+                <th width="12%">Hostname</th>
+                <th width="15%">URI</th>
+                <th width="10%">Content Type</th>
+                <th width="13%">User Agent</th>
+                <th width="4%">Length</th>
             </tr>
             {% for http in analysis.suricata.http %}
             <tr>
