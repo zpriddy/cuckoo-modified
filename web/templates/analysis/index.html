@@ -129,12 +129,11 @@
                 <tr>
                     <th width="3%">ID</th>
                     <th width="12%">Timestamp</th>
-                    <th width="53%">URL</th>
+                    <th width="58%">URL</th>
                     <th width="5%">SuriAlert</th>
                     <th width="5%">SuriHTTP</th>
                     <th width="5%">SuriTLS</th>
                     <th width="5%">SuriFiles</th>
-                    <th width="5%">Moloch</th>
                     <th width="7%" style="text-align: right;">Status</th>
                 </tr>
                 </thead>
@@ -154,6 +153,8 @@
                         <td style="word-wrap: break-word;">
                             {% if analysis.status == "reported" %}
                                 <a href="{% url "analysis.views.report" analysis.id %}"><span class="mono">{{analysis.target}}</span></a></td>
+                            {% elif analysis.status == "running" or analysis.status == "completed" %}
+                                <a href="{% url "submission.views.status" analysis.id %}"><span class="mono">{{analysis.target}}</span></a>
                             {% else %}
                                 <span class="mono">{{analysis.target}}</span>
                             {% endif %}
@@ -181,13 +182,6 @@
                         <td>
                             {% if analysis.suri_file_cnt %}
                                 <span class="mono">{{analysis.suri_file_cnt}}</span></a>
-                            {% else %}
-                                  <span class="mono">None</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if analysis.moloch_url %}
-                                <a href={{analysis.moloch_url}} target="_blank"><span class="mono">MOLOCH</span></a>
                             {% else %}
                                   <span class="mono">None</span>
                             {% endif %}
