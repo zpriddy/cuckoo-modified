@@ -157,6 +157,7 @@ class Suricata(Processing):
 
                 elif parsed["event_type"] == "http":
                     hlog = dict()
+                    print parsed
                     hlog["srcport"] = parsed["src_port"]
                     hlog["srcip"] = parsed["src_ip"]
                     hlog["dstport"] = parsed["dest_port"]
@@ -165,7 +166,10 @@ class Suricata(Processing):
                     hlog["hostname"] = parsed["http"]["hostname"]
                     hlog["uri"] = parsed["http"]["url"]
                     hlog["length"] = parsed["http"]["length"]
-                    hlog["status"] = parsed["http"]["status"]
+                    try:
+                        hlog["status"] = parsed["http"]["status"]
+                    except:
+                        hlog["status"] = "None"
                     hlog["method"] = parsed["http"]["http_method"]
                     try:
                        hlog["contenttype"] = parsed["http"]["http_content_type"]
