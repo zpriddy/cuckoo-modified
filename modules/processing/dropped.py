@@ -32,7 +32,6 @@ class Dropped(Processing):
                         file_info["data"] = filedata[:2048] + " <truncated>"
                     else:
                         file_info["data"] = filedata
-                    
                 dropped_files.append(file_info)
 
         return dropped_files

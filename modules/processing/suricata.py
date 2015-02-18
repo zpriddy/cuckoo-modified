@@ -61,19 +61,20 @@ class Suricata(Processing):
         suricata["file_info"]=[]
 
         SURICATA_EVE_LOG_FULL_PATH = "%s/%s" % (self.logs_path, SURICATA_EVE_LOG)
-        SURICATA_FILE_LOG_FULL_PATH = "%s/%s" % (self.logs_path,SURICATA_FILE_LOG)
-        SURICATA_FILES_DIR_FULL_PATH = "%s/%s" % (self.logs_path,SURICATA_FILES_DIR)
+        SURICATA_FILE_LOG_FULL_PATH = "%s/%s" % (self.logs_path, SURICATA_FILE_LOG)
+        SURICATA_FILES_DIR_FULL_PATH = "%s/%s" % (self.logs_path, SURICATA_FILES_DIR)
 
         if not os.path.exists(SURICATA_CONF):
             log.warning("Unable to Run Suricata: Conf File %s Does Not Exist" % (SURICATA_CONF))
             return suricata["alerts"]
         if not os.path.exists(self.pcap_path):
             log.warning("Unable to Run Suricata: Pcap file %s Does Not Exist" % (self.pcap_path))
-            return suricata["alerts"]            
+            return suricata["alerts"]
 
         # Add to this if you wish to ignore any SIDs for the suricata alert logs
         sid_blacklist = [
                         2200074,
+                        2210021,
                         ]
 
         if SURICATA_RUNMODE == "socket": 
@@ -192,7 +193,6 @@ class Suricata(Processing):
 
         else:
             log.warning("Suricata: Failed to find eve log at %s" % (SURICATA_EVE_LOG_FULL_PATH))
-              
         if os.path.exists(SURICATA_FILE_LOG_FULL_PATH):
             f = open(SURICATA_FILE_LOG_FULL_PATH).readlines()
             for l in f:
