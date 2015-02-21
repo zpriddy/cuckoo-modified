@@ -263,11 +263,16 @@ def report(request, task_id):
                                   {"error": "The specified analysis does not exist"},
                                   context_instance=RequestContext(request))
 
-    domainlookups = dict((i["domain"], i["ip"]) for i in report["network"]["domains"])
-    iplookups = dict((i["ip"], i["domain"]) for i in report["network"]["domains"])
-    for i in report["network"]["dns"]:
-        for a in i["answers"]:
-            iplookups[a["data"]] = i["request"]
+    # Creating dns information dicts by domain and ip.
+    if "network" in report and "domains" in report["network"]:
+        domainlookups = dict((i["domain"], i["ip"]) for i in report["network"]["domains"])
+        iplookups = dict((i["ip"], i["domain"]) for i in report["network"]["domains"])
+        for i in report["network"]["dns"]:
+            for a in i["answers"]:
+                iplookups[a["data"]] = i["request"]
+    else:
+        domainlookups = dict()
+        iplookups = dict()
 
     return render_to_response("analysis/report.html",
                               {"analysis": report, "domainlookups": domainlookups, "iplookups": iplookups},
@@ -278,8 +283,15 @@ def file(request, category, object_id):
     file_item = fs.get(ObjectId(object_id))
 
     if file_item:
-        # Composing file name in format sha256_originalfilename.
-        file_name = file_item.sha256 + "_" + file_item.filename
+        file_name = file_item.sha256
+        if category == "pcap":
+            file_name += ".pcap"
+        elif category == "screenshot":
+            file_name += ".jpg"
+        elif category == 'memdump':
+            file_name += ".dmp"
+        else:
+            file_name += ".bin"
 
         # Managing gridfs error if field contentType is missing.
         try:

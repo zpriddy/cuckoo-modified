@@ -19,6 +19,7 @@ conf/*
 
 # Ignore OS generated files
 .DS_Store*
+.AppleDouble
 ehthumbs.db
 Icon?
 Thumbs.db
