@@ -141,7 +141,10 @@ def chunk(request, task_id, pid, pagenum):
         if not process:
             raise PermissionDenied
 
-        objectid = process["calls"][pagenum]
+        try:
+            objectid = process["calls"][pagenum]
+        except:
+            raise PermissionDenied
         chunk = results_db.calls.find_one({"_id": ObjectId(objectid)})
 
         return render_to_response("analysis/behavior/_chunk.html",
@@ -420,6 +423,14 @@ def search(request):
                 continue
 
             new = new.to_dict()
+
+            if result["info"]["category"] == "file":
+                if new["sample_id"]:
+                    sample = db.view_sample(new["sample_id"])
+                    if sample:
+                        new["sample"] = sample.to_dict()
+                filename = os.path.basename(new["target"])
+                new.update({"filename": filename})
 
             rtmp = results_db.analysis.find_one({"info.id": int(new["id"])},{"virustotal_summary": 1, "suri_tls_cnt": 1, "suri_alert_cnt": 1, "suri_http_cnt": 1, "suri_file_cnt": 1, "mlist_cnt": 1},sort=[("_id", pymongo.DESCENDING)])
             if rtmp:
