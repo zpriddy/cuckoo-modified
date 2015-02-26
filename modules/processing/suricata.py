@@ -163,16 +163,25 @@ class Suricata(Processing):
                     hlog["dstport"] = parsed["dest_port"]
                     hlog["dstip"] = parsed["dest_ip"]
                     hlog["timestamp"] = parsed["timestamp"].replace("T", " ")
-                    hlog["hostname"] = parsed["http"]["hostname"]
-                    hlog["uri"] = parsed["http"]["url"]
+                    try:
+                        hlog["hostname"] = parsed["http"]["hostname"]
+                    except:
+                        hlog["hostname"] = ""
+                    try:
+                        hlog["uri"] = parsed["http"]["url"]
+                    except:
+                        hlog["uri"] = ""
                     hlog["length"] = parsed["http"]["length"]
                     try:
                         hlog["status"] = parsed["http"]["status"]
                     except:
                         hlog["status"] = "None"
-                    hlog["method"] = parsed["http"]["http_method"]
                     try:
-                       hlog["contenttype"] = parsed["http"]["http_content_type"]
+                        hlog["method"] = parsed["http"]["http_method"]
+                    except:
+                        hlog["method"] = ""
+                    try:
+                        hlog["contenttype"] = parsed["http"]["http_content_type"]
                     except:
                         hlog["contenttype"] = "None"
                     try:
