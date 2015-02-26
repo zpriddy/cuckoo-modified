@@ -590,7 +590,6 @@ class Office():
             if indicator.name == "PowerPoint Presentation" and indicator.value == True:
                 results["Metadata"]["DocumentType"] = indicator.name
 
-        print results["Macro"]["Analysis"]
         return results
 
     def run(self):
