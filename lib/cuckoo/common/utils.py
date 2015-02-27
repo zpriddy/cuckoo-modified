@@ -1197,3 +1197,12 @@ def classlock(f):
         with self._lock:
             return f(self, *args, **kwargs)
     return inner
+
+def read_file(f):
+    with open(f, "r") as fd:
+        data = fd.read(2049)
+    if len(data) > 2048:
+        return convert_to_printable(data[:2048] + " <truncated>")
+    else:
+        return convert_to_printable(data)
+

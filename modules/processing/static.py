@@ -44,10 +44,10 @@ from lib.cuckoo.common.office.olevba import detect_patterns
 from lib.cuckoo.common.office.olevba import detect_suspicious
 from lib.cuckoo.common.office.olevba import filter_vba
 from lib.cuckoo.common.office.olevba import VBA_Parser
-from lib.cuckoo.common.utils import convert_to_printable
 from lib.cuckoo.common.pdftools.pdfid import PDFiD, PDFiD2JSON
 from lib.cuckoo.common.peepdf.PDFCore import PDFParser
 from lib.cuckoo.common.peepdf.JSAnalysis import analyseJS
+from lib.cuckoo.common.utils import convert_to_printable
 
 log = logging.getLogger(__name__)
 
@@ -439,6 +439,13 @@ class PDF:
                             else:
                                 tmp = jsdata[i]
                             ret_data += tmp
+                    # At least parse ASCII streams if PyV8 is not installed
+                    elif "ASCII" in obj_data["File Type"]:
+                        buf = convert_to_printable(decoded_stream.strip())
+                        if len(buf) > 2048:
+                            ret_data = buf[:2048] + " <truncated>"
+                        else:
+                            ret_data = buf
                     else:
                         ret_data = "PyV8 not installed, unable to extract JavaScript."
 

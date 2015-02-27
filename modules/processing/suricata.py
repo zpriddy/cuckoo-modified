@@ -14,6 +14,7 @@ import shutil
 from lib.cuckoo.common.constants import CUCKOO_ROOT
 from lib.cuckoo.common.abstracts import Processing
 from lib.cuckoo.common.objects import File
+from lib.cuckoo.common.utils import read_file
 
 log = logging.getLogger(__name__)
 class Suricata(Processing):
@@ -205,6 +206,7 @@ class Suricata(Processing):
 
         else:
             log.warning("Suricata: Failed to find eve log at %s" % (SURICATA_EVE_LOG_FULL_PATH))
+
         if os.path.exists(SURICATA_FILE_LOG_FULL_PATH):
             f = open(SURICATA_FILE_LOG_FULL_PATH).readlines()
             for l in f:
@@ -226,6 +228,8 @@ class Suricata(Processing):
                             log.warning("Unable to copy suricata file: %s" % e)
                     file_info = File(file_path=src_file).get_all()
                     d["file_info"]=file_info
+                    if "ASCII" in file_info["type"]:
+                        d["file_info"]["data"] = read_file(file_info["path"])
                 suricata["files"].append(d)
         else:
             log.warning("Suricata: Failed to find file log at %s" % (SURICATA_FILE_LOG_FULL_PATH))
@@ -236,4 +240,5 @@ class Suricata(Processing):
             ret,stdout,stderr = self.cmd_wrapper(cmd)
             if ret != 0:
                 log.warning("Suricata: Failed to create Zip File" % (SURICATA_FILES_DIR_FULL_PATH))
-        return suricata 
+        return suricata
+
