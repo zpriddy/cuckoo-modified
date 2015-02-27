@@ -32,7 +32,10 @@ def index(request):
         total_tasks=db.count_tasks(),
         states_count={},
         estimate_hour=None,
-        estimate_day=None
+        estimate_day=None,
+        total_urls=len(db.list_tasks(category="url")),
+        total_files=len(db.list_tasks(category="file")),
+        stats_files=db.stats_sample(),
     )
 
     states = (

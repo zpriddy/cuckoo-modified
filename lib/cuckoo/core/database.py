@@ -1379,6 +1379,26 @@ class Database(object):
         return sample
 
     @classlock
+    def stats_sample(self):
+        session = self.Session()
+        data = session.query(Sample.file_type).all()
+        session.close()
+        results = {}
+        for row in data:
+            row = str(row)[2:-3]
+            # Truncate metadata info for Composite documents
+            if "Composite Document File V2 Document" in row:
+                row = "Composite Document File V2 Document"
+            try:
+                results[row] += 1
+            except:
+                results[row] = 1
+        results = sorted(results.items())
+        filedata = sorted(results, key=lambda tup: tup[1], reverse=True)
+        return filedata
+
+
+    @classlock
     def count_samples(self):
         """Counts the amount of samples in the database."""
         session = self.Session()

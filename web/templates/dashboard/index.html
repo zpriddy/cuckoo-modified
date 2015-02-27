@@ -7,18 +7,52 @@
 </div>
 
 <div class="row">
-    <div class="col-xs-6">
+    <div class="col-xs-3">
         <div class="jumbotron" style="text-align: center;">
             <h1>{{report.total_tasks}}</h1>
-            Total tasks
+            Total Tasks
         </div>
     </div>
-    <div class="col-xs-6">
+    <div class="col-xs-3">
+        <div class="jumbotron" style="text-align: center;">
+            <h1>{{report.total_urls}}</h1>
+            Total URL Tasks
+        </div>
+    </div>
+    <div class="col-xs-3">
+        <div class="jumbotron" style="text-align: center;">
+            <h1>{{report.total_files}}</h1>
+            Total Files Tasks
+        </div>
+    </div>
+    <div class="col-xs-3">
         <div class="jumbotron" style="text-align: center;">
             <h1>{{report.total_samples}}</h1>
-            Total samples
+            Total Unique Samples
         </div>
     </div>
+</div>
+
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h3 class="panel-title">Unique Filetypes Analyzed</h3>
+    </div>
+    <table class="table table-striped" style="table-layout: fixed;">
+        <thead>
+        <tr>
+            <th>Filetype</th>
+            <th>Count</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for filetype, count in report.stats_files %}
+            <tr>
+                <td>{{filetype}}</td>
+                <td>{{count}}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
 
 <div class="panel panel-primary">
