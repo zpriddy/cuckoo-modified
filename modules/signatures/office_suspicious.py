@@ -40,7 +40,6 @@ class Office_Suspicious(Signature):
                             if "children" in parent:
                                 c1 = parent["children"]
                                 for child in c1:
-                                    print child
                                     output = ""
                                     if child["name"] in suspects:
                                         ret = True
