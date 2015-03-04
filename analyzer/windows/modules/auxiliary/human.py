@@ -36,6 +36,11 @@ def foreach_child(hwnd, lparam):
         "don't send",
         "continue",
         "unzip",
+        "open",
+    ]
+
+    dontclick = [
+        "don't run",
     ]
 
     classname = create_unicode_buffer(50)
@@ -51,6 +56,9 @@ def foreach_child(hwnd, lparam):
         # Check if the button is "positive".
         for button in buttons:
             if button in text.value.lower():
+                for nots in dontclick:
+                    if nots in text.value.lower():
+                        return False
                 log.info("Found button \"%s\", clicking it" % text.value)
                 USER32.SetForegroundWindow(hwnd)
                 KERNEL32.Sleep(1000)
