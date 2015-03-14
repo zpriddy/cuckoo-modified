@@ -44,7 +44,7 @@ class Office_Suspicious(Signature):
                                     if child["name"] in suspects:
                                         ret = True
                                         output += parent["name"] + " -> " + child["name"]
-                                        if "children" in child:
+                                        if "children" in child and child["children"]:
                                             output += " -> " + child["children"][0]["name"]
                                         self.data.append({"Processes": output})
 
