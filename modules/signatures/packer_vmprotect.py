@@ -1,4 +1,4 @@
-# Copyright (C) 2013 Claudio "nex" Guarnieri (@botherder)
+# Copyright (C) 2014 Jeremy Hedges
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,18 +15,20 @@
 
 from lib.cuckoo.common.abstracts import Signature
 
-class NetworkIRC(Signature):
-    name = "network_irc"
-    description = "Connects to an IRC server, possibly part of a botnet"
-    severity = 3
-    categories = ["irc"]
-    authors = ["nex"]
-    minimum = "0.6"
+class VMPPacked(Signature):
+    name = "packer_vmprotect"
+    description = "The executable is likely packed with VMProtect"
+    severity = 2
+    categories = ["packer"]
+    authors = ["Jeremy Hedges"]
+    minimum = "0.5"
 
     def run(self):
-        if "network" in self.results:
-            if "irc" in self.results["network"]:
-                if len(self.results["network"]["irc"]) > 0:
-                    return True
+        if "static" in self.results:
+            if "pe_sections" in self.results["static"]:
+                for section in self.results["static"]["pe_sections"]:
+                    if section["name"].lower().startswith(".vmp"):
+                        self.data.append({"section" : section})
+                        return True
 
         return False

@@ -1,4 +1,4 @@
-# Copyright (C) 2013 Claudio "nex" Guarnieri (@botherder)
+# Copyright (C) 2015 KillerInstinct
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,18 +15,27 @@
 
 from lib.cuckoo.common.abstracts import Signature
 
-class NetworkIRC(Signature):
-    name = "network_irc"
-    description = "Connects to an IRC server, possibly part of a botnet"
+class VMwareDetectMutexs(Signature):
+    name = "antivm_vmware_mutexes"
+    description = "Attempts to detect VMware using known mutexes"
     severity = 3
-    categories = ["irc"]
-    authors = ["nex"]
-    minimum = "0.6"
+    categories = ["antivm"]
+    authors = ["KillerInstinct"]
+    minimum = "0.5"
 
     def run(self):
-        if "network" in self.results:
-            if "irc" in self.results["network"]:
-                if len(self.results["network"]["irc"]) > 0:
-                    return True
+        ret = False
+        indocators = [
+            ".*VMwareGuestDnDDataMutex$",
+            ".*VMwareGuestCopyPasteMutex$",
+            ".*VMToolsHookQueueLock$",
+            ".*HGFSMUTEX.*",
+        ]
 
-        return False
+        for indicator in indicators:
+            match = self.check_mutex(pattern=indicator, regex=True)
+            if match:
+                self.data.append({"mutex": match})
+                ret = True
+
+        return ret

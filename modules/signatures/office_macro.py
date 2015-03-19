@@ -33,11 +33,13 @@ class Office_Macro(Signature):
                     if total > 1:
                         self.description = "The office file has %s macros." % str(total)
 
+        # Check for known lures
         if ret and "strings" in self.results:
             lures = ["bank account",
                      "enable content",
                      "tools > macro",
                      "macros must be enabled",
+                     "enable macro",
                     ]
             positives = list()
             for string in self.results["strings"]:
@@ -51,5 +53,14 @@ class Office_Macro(Signature):
                 self.description += " The file also appears to have strings indicating common phishing lures."
                 for positive in positives:
                     self.data.append({"Lure": positive})
+
+        # Increase severity on empty documents with macros
+        if ret and "static" in self.results:
+            if "Metadata" in self.results["static"]:
+                if "SummaryInformation" in self.results["static"]["Metadata"]:
+                    words = self.results["static"]["Metadata"]["SummaryInformation"]["num_words"]
+                    if words == "0":
+                        self.severity = 3
+                        self.description += " The file also appears to have no content."
 
         return ret

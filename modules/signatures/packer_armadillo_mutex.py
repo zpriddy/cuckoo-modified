@@ -1,4 +1,4 @@
-# Copyright (C) 2012 Claudio "nex" Guarnieri (@botherder)
+# Copyright (C) 2015 KillerInstinct
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,34 +15,24 @@
 
 from lib.cuckoo.common.abstracts import Signature
 
-class CheckIP(Signature):
-    name = "recon_checkip"
-    description = "Looks up the external IP address"
-    severity = 2
-    categories = ["recon"]
-    authors = ["nex"]
+class ArmadilloMutex(Signature):
+    name = "packer_armadillo_mutex"
+    description = "Detected Armadillo packer using a known mutex"
+    severity = 3
+    categories = ["packer"]
+    authors = ["KillerInstinct"]
     minimum = "0.5"
 
     def run(self):
         indicators = [
-            "checkip.dyndns.com",
-            "checkip.dyndns.org",
-            "whatismyip.org",
-            "whatsmyipaddress.com",
-            "getmyip.org",
-            "getmyip.co.uk",
-            "icanhazip.com",
-            "whatismyipaddress.com",
-            "myipaddress.com",
-            "ip-addr.es",
-            "api.ipify.org",
-            "ipinfo.info",
-            "myexternalip.com",
+            ".*:SIMULATEEXPIRED"
         ]
 
+        ret = False
         for indicator in indicators:
-            if self.check_domain(pattern=indicator):
-                self.data.append({"domain" : indicator})
-                return True
+            match = self.check_mutex(pattern=indicator, regex=True)
+            if match:
+                self.data.append({"mutex": match})
+                ret = True
 
-        return False
+        return ret

@@ -24,11 +24,6 @@ class Office_Suspicious(Signature):
     minimum = "0.5"
 
     def run(self):
-        suspects = ["cmd.exe",
-                    "powershell.exe",
-                    "cscript.exe",
-                    "wscript.exe",
-                   ]
         ret = False
 
         if "static" in self.results:
@@ -37,14 +32,15 @@ class Office_Suspicious(Signature):
                     if "behavior" in self.results:
                         if "processtree" in self.results["behavior"]:
                             parent = self.results["behavior"]["processtree"][0]
+                            parentmod = parent["module_path"]
                             if "children" in parent:
                                 c1 = parent["children"]
                                 for child in c1:
                                     output = ""
-                                    if child["name"] in suspects:
+                                    if child["module_path"] != parentmod:
                                         ret = True
                                         output += parent["name"] + " -> " + child["name"]
-                                        if "children" in child:
+                                        if "children" in child and child["children"]:
                                             output += " -> " + child["children"][0]["name"]
                                         self.data.append({"Processes": output})
 
