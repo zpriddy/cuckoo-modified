@@ -2,7 +2,7 @@
 # This file is part of Cuckoo Sandbox - http://www.cuckoosandbox.org
 # See the file 'docs/LICENSE' for copying permission.
 
-def choose_package(file_type, file_name):
+def choose_package(file_type, file_name, exports):
     """Choose analysis package due to file type and file extension.
     @param file_type: file type.
     @param file_name: file name.
@@ -17,6 +17,10 @@ def choose_package(file_type, file_name):
         if file_name.endswith(".cpl"):
             return "cpl"
         else:
+            if exports:
+                explist = exports.split(",")
+                if "DllRegisterServer" in explist:
+                    return "regsvr"
             return "dll"
     elif "PE32" in file_type or "MS-DOS" in file_type:
         return "exe"
@@ -36,10 +40,14 @@ def choose_package(file_type, file_name):
         return "ppt"
     elif "HTML" in file_type or file_name.endswith((".htm", ".html")):
         return "html"
-    elif file_name.endswith(".jar"):
+    elif "Java Jar" in file_type or file_name.endswith(".jar"):
         return "jar"
     elif "Zip" in file_type:
         return "zip"
+    elif "RAR archive" in file_type or file_name.endswith(".rar"):
+        return "rar"
+    elif "Macromedia Flash" in file_type or file_name.endswith(".swf"):
+        return "swf"
     elif file_name.endswith((".py", ".pyc")) or "Python script" in file_type:
         return "python"
     elif file_name.endswith(".vbs"):

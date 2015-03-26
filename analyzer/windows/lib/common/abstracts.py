@@ -11,8 +11,9 @@ class Package(object):
     """Base abstract analysis package."""
     PATHS = []
 
-    def __init__(self, options={}):
+    def __init__(self, options={}, config=None):
         """@param options: options dict."""
+        self.config = config
         self.options = options
         self.pids = []
 
@@ -36,8 +37,14 @@ class Package(object):
         """Enumerate available paths."""
         for path in self.PATHS:
             basedir = path[0]
+            sys32 = False
+            if len(path) > 1 and path[1].lower() == "system32":
+                sys32 = True
             if basedir == "SystemRoot":
-                yield os.path.join(os.getenv("SystemRoot"), *path[1:])
+                if not sys32 or "PE32+" not in self.config.file_type:
+                    yield os.path.join(os.getenv("SystemRoot"), *path[1:])
+                elif sys32:
+                    yield os.path.join(os.getenv("SystemRoot"), "sysnative", *path[2:])
             elif basedir == "ProgramFiles":
                 yield os.path.join(os.getenv("ProgramFiles"), *path[1:])
                 if os.getenv("ProgramFiles(x86)"):
@@ -75,16 +82,21 @@ class Package(object):
         suspended = True
         if free:
             suspended = False
+        kernel_analysis = self.options.get("kernel_analysis", False)
+        
+        if kernel_analysis != False:
+            kernel_analysis = True
 
         p = Process()
-        if not p.execute(path=path, args=args, suspended=suspended):
+        if not p.execute(path=path, args=args, suspended=suspended, kernel_analysis=kernel_analysis):
             raise CuckooPackageError("Unable to execute the initial process, "
                                      "analysis aborted.")
 
         if free:
             return None
 
-        p.inject(dll, interest)
+        if not kernel_analysis:
+            p.inject(dll, interest)
         p.resume()
         p.close()
         

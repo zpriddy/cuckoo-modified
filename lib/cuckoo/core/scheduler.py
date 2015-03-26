@@ -2,6 +2,7 @@
 # This file is part of Cuckoo Sandbox - http://www.cuckoosandbox.org
 # See the file 'docs/LICENSE' for copying permission.
 
+import re
 import os
 import time
 import shutil
@@ -17,11 +18,20 @@ from lib.cuckoo.common.exceptions import CuckooCriticalError
 from lib.cuckoo.common.objects import File
 from lib.cuckoo.common.utils import create_folder
 from lib.cuckoo.core.database import Database, TASK_COMPLETED, TASK_REPORTED
+from lib.cuckoo.core.database import TASK_FAILED_ANALYSIS
 from lib.cuckoo.core.database import ANALYSIS_STARTED, ANALYSIS_FINISHED
 from lib.cuckoo.core.guest import GuestManager
 from lib.cuckoo.core.plugins import list_plugins, RunAuxiliary, RunProcessing
 from lib.cuckoo.core.plugins import RunSignatures, RunReporting
 from lib.cuckoo.core.resultserver import ResultServer
+
+try:
+    import pefile
+    import peutils
+    HAVE_PEFILE = True
+except ImportError:
+    HAVE_PEFILE = False
+
 
 log = logging.getLogger(__name__)
 
@@ -194,6 +204,19 @@ class AnalysisManager(Thread):
         if self.task.category == "file":
             options["file_name"] = File(self.task.target).get_name()
             options["file_type"] = File(self.task.target).get_type()
+            # if it's a PE file, collect export information to use in more smartly determining the right
+            # package to use
+            options["exports"] = ""
+            if HAVE_PEFILE and ("PE32" in options["file_type"] or options["file_type"] == "MS-DOS executable"):
+                try:
+                    pe = pefile.PE(self.task.target)
+                    if hasattr(pe, "DIRECTORY_ENTRY_EXPORT"):
+                        exports = []
+                        for exported_symbol in pe.DIRECTORY_ENTRY_EXPORT.symbols:
+                            exports.append(re.sub(r'[^A-Za-z0-9_?@-]', '', exported_symbol.name))
+                        options["exports"] = ",".join(exports)
+                except:
+                    pass
 
         return options
 
