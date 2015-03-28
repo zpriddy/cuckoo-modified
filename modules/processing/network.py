@@ -142,7 +142,7 @@ class Pcap:
             except:
                 log.error("Unable to GEOIP resolve %s" % ip)
         return cn
-            
+
     def _add_hosts(self, connection):
         """Add IPs to unique list.
         @param connection: connection data
@@ -150,7 +150,7 @@ class Pcap:
         try:
             if connection["src"] not in self.hosts:
                 ip = convert_to_printable(connection["src"])
-                
+
                 # We consider the IP only if it hasn't been seen before.
                 if ip not in self.hosts:
                     # If the IP is not a local one, this might be a leftover
@@ -230,7 +230,7 @@ class Pcap:
             entry["type"] = data.type
 
             # Extract data from dpkg.icmp.ICMP.
-            try: 
+            try:
                 entry["data"] = convert_to_printable(data.data.data)
             except: 
                 entry["data"] = ""
