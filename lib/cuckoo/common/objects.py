@@ -261,7 +261,7 @@ class File:
                     return
 
                 try:
-                    rules = yara.compile(rulepath, error_on_warning=True)
+                    rules = yara.compile(rulepath, error_on_warning=False)
 
                     for match in rules.match(self.file_path):
                         strings = []
@@ -289,8 +289,8 @@ class File:
 
         return matches
     def get_clamav(self):
-        """Get Yara signatures matches.
-        @return: matched Yara signatures.
+        """Get ClamAV signatures matches.
+        @return: matched ClamAV signatures.
         """
         matches = None
 
