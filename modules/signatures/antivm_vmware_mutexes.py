@@ -15,30 +15,27 @@
 
 from lib.cuckoo.common.abstracts import Signature
 
-class RansomwareFiles(Signature):
-    name = "ransomware_files"
-    description = "Created known ransomware decryption instruction / key file."
+class VMwareDetectMutexes(Signature):
+    name = "antivm_vmware_mutexes"
+    description = "Attempts to detect VMware using known mutexes"
     severity = 3
-    categories = ["ransomware"]
+    categories = ["antivm"]
     authors = ["KillerInstinct"]
     minimum = "0.5"
 
     def run(self):
-        # Lower-case file names
-        file_list = [
-            "help_decrypt.html",
-            "decrypt_instruction.html",
-            "decrypt_instructions.txt",
-            "vault.key",
-            "\\vault.txt",
+        ret = False
+        indicators = [
+            ".*VMwareGuestDnDDataMutex$",
+            ".*VMwareGuestCopyPasteMutex$",
+            ".*VMToolsHookQueueLock$",
+            ".*HGFSMUTEX.*",
         ]
 
-        if "behavior" in self.results:
-            if "summary" in self.results["behavior"]:
-                if "files" in self.results["behavior"]["summary"]:
-                    for path in self.results["behavior"]["summary"]["files"]:
-                        for badfile in file_list:
-                            if badfile in path.lower():
-                                return True
+        for indicator in indicators:
+            match = self.check_mutex(pattern=indicator, regex=True)
+            if match:
+                self.data.append({"mutex": match})
+                ret = True
 
-        return False
+        return ret
