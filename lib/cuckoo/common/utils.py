@@ -1082,6 +1082,14 @@ def store_temp_file(filedata, filename, path=None):
 
     return tmp_file_path
 
+def demux_sample(filename):
+    """
+    If file is a ZIP, extract its included files and return their file paths
+    """
+    retlist = []
+    retlist.append(filename)
+    return retlist
+
 class TimeoutServer(xmlrpclib.ServerProxy):
     """Timeout server for XMLRPC.
     XMLRPC + timeout - still a bit ugly - but at least gets rid of setdefaulttimeout
