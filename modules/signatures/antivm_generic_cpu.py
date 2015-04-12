@@ -1,4 +1,4 @@
-# Copyright (C) 2015 KillerInstinct, Accuvant, Inc. (bspengler@accuvant.com)
+# Copyright (C) 2015 Accuvant, Inc. (bspengler@accuvant.com)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,26 +15,15 @@
 
 from lib.cuckoo.common.abstracts import Signature
 
-class RansomwareFiles(Signature):
-    name = "ransomware_files"
-    description = "Created known ransomware decryption instruction / key file."
+class AntiVMCPU(Signature):
+    name = "antivm_generic_cpu"
+    description = "Checks the CPU name from registry, possibly for anti-virtualization"
     severity = 3
-    categories = ["ransomware"]
-    authors = ["KillerInstinct"]
+    categories = ["anti-vm"]
+    authors = ["Accuvant"]
     minimum = "1.2"
 
     def run(self):
-        # Lower-case file names
-        file_list = [
-            "\\\\help_decrypt.html$",
-            "\\\\decrypt_instruction.html$",
-            "\\\\decrypt_instructions.txt$",
-            "\\\\vault.key$",
-            "\\\\vault.txt$",
-        ]
-
-        for file in file_list:
-            if self.check_write_file(pattern=file, regex=True):
-                return True
-
+        if self.check_read_key(pattern=r'.*\\HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\[^\\]+\\ProcessorNameString$', regex=True):
+            return True
         return False

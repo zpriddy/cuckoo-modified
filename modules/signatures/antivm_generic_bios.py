@@ -1,4 +1,4 @@
-# Copyright (C) 2013 Claudio "nex" Guarnieri (@botherder)
+# Copyright (C) 2013,2015 Claudio "nex" Guarnieri (@botherder), Accuvant, Inc. (bspengler@accuvant.com)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,14 +20,10 @@ class AntiVMBios(Signature):
     description = "Checks the version of Bios, possibly for anti-virtualization"
     severity = 3
     categories = ["anti-vm"]
-    authors = ["nex"]
-    minimum = "1.0"
-    evented = True
+    authors = ["nex", "Accuvant"]
+    minimum = "1.2"
 
-    filter_categories = set(["registry"])
- 
-    def on_call(self, call, process):
-        #if self.check_key(pattern="HKEY_LOCAL_MACHINE\\HARDWARE\\DESCRIPTION\\System"):
-        if (self.check_argument_call(call, pattern="SystemBiosVersion", name="ValueName", category="registry") or
-            self.check_argument_call(call, pattern="VideoBiosVersion", name="ValueName", category="registry")):
+    def run(self):
+        if self.check_read_key(pattern=".*\\\\HARDWARE\\\\DESCRIPTION\\\\System\\\\(SystemBiosVersion|VideoBiosVersion)$", regex=True):
             return True
+        return False

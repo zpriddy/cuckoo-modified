@@ -43,9 +43,12 @@ class Hidden_Window(Signature):
                 self.hidden.append((proc, spawn))
                 self.data.append({"Process": proc + " -> " + spawn})
             # Handle CREATE_NO_WINDOW flag, ignored for CREATE_NEW_CONSOLE and DETACHED_PROCESS
-            elif cfbuf & 0x08000000 and  not (cfbuf & 0x10 or cfbuf & 0x8):
+            elif cfbuf & 0x08000000 and not (cfbuf & 0x10 or cfbuf & 0x8):
                 proc = process["process_name"]
                 spawn = self.get_argument(call, "ApplicationName")
+                # Sometimes malware uses command line...
+                if not spawn:
+                    spawn = self.get_argument(call, "CommandLine")
                 self.hidden.append((proc, spawn))
                 self.data.append({"Process": proc + " -> " + spawn})
 

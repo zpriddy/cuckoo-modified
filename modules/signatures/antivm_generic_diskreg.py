@@ -1,4 +1,4 @@
-# Copyright (C) 2015 KillerInstinct, Accuvant, Inc. (bspengler@accuvant.com)
+# Copyright (C) 2012,2015 Claudio "nex" Guarnieri (@botherder), Accuvant, Inc. (bspengler@accuvant.com)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,26 +15,21 @@
 
 from lib.cuckoo.common.abstracts import Signature
 
-class RansomwareFiles(Signature):
-    name = "ransomware_files"
-    description = "Created known ransomware decryption instruction / key file."
+class AntiVMDiskReg(Signature):
+    name = "antivm_generic_diskreg"
+    description = "Checks the presence of disk drives in the registry, possibly for anti-virtualization"
     severity = 3
-    categories = ["ransomware"]
-    authors = ["KillerInstinct"]
-    minimum = "1.2"
+    confidence = 50
+    categories = ["anti-vm"]
+    authors = ["nex"]
+    minimum = "0.5"
 
     def run(self):
-        # Lower-case file names
-        file_list = [
-            "\\\\help_decrypt.html$",
-            "\\\\decrypt_instruction.html$",
-            "\\\\decrypt_instructions.txt$",
-            "\\\\vault.key$",
-            "\\\\vault.txt$",
-        ]
-
-        for file in file_list:
-            if self.check_write_file(pattern=file, regex=True):
+        indicators = [
+            ".*\\\\SYSTEM\\\\(CurrentControlSet|ControlSet001)\\\\Enum\\\\IDE$",
+            ".*\\\\SYSTEM\\\\(CurrentControlSet|ControlSet001)\\\\Services\\\\Disk\\\\Enum\\\\.*",
+            ]
+        for indicator in indicators:
+            if self.check_key(pattern=indicator, regex=True):
                 return True
-
         return False
