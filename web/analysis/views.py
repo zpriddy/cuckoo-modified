@@ -350,6 +350,30 @@ def file(request, category, object_id):
                                   {"error": "File not found"},
                                   context_instance=RequestContext(request))
 
+@require_safe
+def filereport(request, task_id, category):
+    formats = {
+        "json": "report.json",
+        "html": "report.html",
+        "pdf": "report.pdf",
+        "maec": "report.maec-1.1.xml",
+        "metadata": "report.metadata.xml",
+    }
+
+    if category in formats:
+        file_path = os.path.join(CUCKOO_ROOT, "storage", "analyses", str(task_id), "reports", formats[category])
+        file_name = str(task_id) + "_" + formats[category]
+        content_type = "application/octet-stream"
+
+        if os.path.exists(file_path):
+            response = HttpResponse(open(file_path, "rb").read(), content_type=content_type)
+            response["Content-Disposition"] = "attachment; filename={0}".format(file_name)
+
+            return response
+
+    return render_to_response("error.html",
+                              {"error": "File not found"},
+                              context_instance=RequestContext(request))
 
 @require_safe
 def full_memory_dump_file(request, analysis_number):
@@ -507,11 +531,16 @@ def remove(request, task_id):
     """Remove an analysis.
     @todo: remove folder from storage.
     """
-    anals = results_db.analysis.find({"info.id": int(task_id)})
-    # Only one analysis found, proceed.
-    if anals.count() == 1:
+    analyses = results_db.analysis.find({"info.id": int(task_id)})
+    # Checks if more analysis found with the same ID, like if process.py was run manually.
+    if analyses.count() > 1:
+        message = "Multiple tasks with this ID deleted."
+    elif analyses.count() == 1:
+        message = "Task deleted."
+
+    if analyses.count() > 0:
         # Delete dups too.
-        for analysis in anals:
+        for analysis in analyses:
             # Delete sample if not used.
             if results_db.analysis.find({"target.file_id": ObjectId(analysis["target"]["file_id"])}).count() == 1:
                 fs.delete(ObjectId(analysis["target"]["file_id"]))
@@ -532,22 +561,17 @@ def remove(request, task_id):
                     results_db.calls.remove({"_id": ObjectId(call)})
             # Delete analysis data.
             results_db.analysis.remove({"_id": ObjectId(analysis["_id"])})
-    elif anals.count() == 0:
-        return render_to_response("error.html",
-                                  {"error": "The specified analysis does not exist"},
-                                  context_instance=RequestContext(request))
-    # More analysis found with the same ID, like if process.py was run manually.
     else:
         return render_to_response("error.html",
-                                  {"error": "The specified analysis is duplicated in mongo, please check manually"},
+                                  {"error": "The specified analysis does not exist"},
                                   context_instance=RequestContext(request))
 
     # Delete from SQL db.
     db = Database()
     db.delete_task(task_id)
 
-    return render_to_response("success.html",
-                              {"message": "Task deleted, thanks for all the fish."},
+    return render_to_response("success_simple.html",
+                              {"message": message},
                               context_instance=RequestContext(request))
 
 @require_safe
