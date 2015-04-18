@@ -368,6 +368,7 @@ def filereport(request, task_id, category):
     formats = {
         "json": "report.json",
         "html": "report.html",
+        "htmlsummary": "summary-report.html",
         "pdf": "report.pdf",
         "maec": "report.maec-1.1.xml",
         "metadata": "report.metadata.xml",
@@ -447,6 +448,8 @@ def search(request):
                 records = results_db.analysis.find({"network.hosts.ip": value}).sort([["_id", -1]])
             elif term == "signature":
                 records = results_db.analysis.find({"signatures.description": {"$regex": value, "$options": "-i"}}).sort([["_id", -1]])
+            elif term == "signame":
+                records = results_db.analysis.find({"signatures.name": {"$regex": value, "$options": "-i"}}).sort([["_id", -1]])
             elif term == "url":
                 records = results_db.analysis.find({"target.url": value}).sort([["_id", -1]])
             elif term == "imphash":
