@@ -1,4 +1,4 @@
-# Copyright (C) 2014 Accuvant, Inc. (bspengler@accuvant.com)
+# Copyright (C) 2015 Kevin Ross
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,14 +15,16 @@
 
 from lib.cuckoo.common.abstracts import Signature
 
-class VMwareDetectKeys(Signature):
-    name = "antivm_vmware_keys"
-    description = "Detects VMware through the presence of a registry key"
+class BrowserHelperObject(Signature):
+    name = "browser_helper_object"
+    description = "Attempts to create or modify a Browser Helper Object"
     severity = 3
-    categories = ["anti-vm"]
-    authors = ["Accuvant"]
+    categories = ["browser"]
+    authors = ["Kevin Ross"]
     minimum = "1.2"
 
     def run(self):
-        return self.check_key(pattern=".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?VMWare,\\ Inc\..*",
-                              regex=True)
+        if self.check_write_key(pattern=".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Explorer\\\\Browser\\ Helper\\ Objects\\\\.*", regex=True):
+            return True
+
+        return False

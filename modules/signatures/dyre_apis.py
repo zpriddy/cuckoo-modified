@@ -49,6 +49,7 @@ class Dyre_APIs(Signature):
     def on_complete(self):
         cryptoret = False
         networkret = False
+        campaign = set()
 
         # Crypto API check
         if self.cryptoapis:
@@ -64,24 +65,31 @@ class Dyre_APIs(Signature):
                             if proc["environ"] and "ComputerName" in proc["environ"]:
                                 compnames.add(proc["environ"]["ComputerName"])
             for httpreq in self.networkapis:
-                # Generate patterns (again, should only ever be one)
+                # Generate patterns (should only ever be one per indicator)
                 for cname in compnames:
-                    buf = re.match("/(\d{4}[a-z]{2}\d{2})/" + cname + "_", httpreq)
-                    if buf:
-                        networkret = True
-                        campaign = buf.group(1)
+                    indicators = [
+                        "/(\d{4}[a-z]{2}\d{2})/" + cname + "_",
+                        "/([^/]+)/" + cname + "/\d+/\d+/\d+/$",
+                    ]
+                    for indicator in indicators:
+                        buf = re.match(indicator, httpreq)
+                        if buf:
+                            networkret = True
+                            campaign.add(buf.group(1))
 
         # Check if there are any winners
         if cryptoret or networkret:
             if cryptoret and networkret:
                 self.confidence = 100
                 self.description = "Exhibits behaviorial and network characteristics of Upatre+Dyre/Mini-Dyre malware"
-                self.data.append({"Campaign": campaign})
+                for camp in campaign:
+                    self.data.append({"Campaign": camp})
                 return True
 
             elif networkret:
                 self.description = "Exhibits network behavior characteristic of Upatre+Dyre/Mini-Dyre malware"
-                self.data.append({"Campaign": campaign})
+                for camp in campaign:
+                    self.data.append({"Campaign": camp})
                 return True
 
             elif cryptoret:

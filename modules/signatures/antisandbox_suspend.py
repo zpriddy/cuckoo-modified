@@ -1,4 +1,4 @@
-# Copyright (C) 2014 Accuvant, Inc. (bspengler@accuvant.com)
+# Copyright (C) 2015 Accuvant, Inc. (bspengler@accuvant.com)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,14 +15,22 @@
 
 from lib.cuckoo.common.abstracts import Signature
 
-class VMwareDetectKeys(Signature):
-    name = "antivm_vmware_keys"
-    description = "Detects VMware through the presence of a registry key"
+class AntiSandboxSuspend(Signature):
+    name = "antisandbox_suspend"
+    description = "Tries to suspend Cuckoo threads to prevent logging of malicious activity"
     severity = 3
-    categories = ["anti-vm"]
+    confidence = 80
+    categories = ["anti-sandbox"]
     authors = ["Accuvant"]
-    minimum = "1.2"
+    minimum = "1.3"
+    evented = True
 
-    def run(self):
-        return self.check_key(pattern=".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?VMWare,\\ Inc\..*",
-                              regex=True)
+    filter_apis = set(["NtSuspendThread"])
+
+    def __init__(self, *args, **kwargs):
+        Signature.__init__(self, *args, **kwargs)
+
+    def on_call(self, call, process):
+        alert = self.get_argument(call, "Alert")
+        if alert:
+            return True

@@ -15,7 +15,6 @@ class AntiAVDetectReg(Signature):
 
     def run(self):
         reg_indicators = [
-            ".*\\\\SYSTEM\\\\CurrentControlSet\\\\services\\\\Avg\\\\SystemValues$"
             ".*\\\\Software\\\\(Wow6432Node\\\\)?Avg$",
             ".*\\\\Software\\\\(Wow6432Node\\\\)?AVAST\\ Software\\\\.*",
             ".*\\\\Software\\\\(Wow6432Node\\\\)?Avira$",
@@ -42,7 +41,33 @@ class AntiAVDetectReg(Signature):
             ".*\\\\Software\\\\(Wow6432Node\\\\)?VBA32$",
             ".*\\\\Software\\\\(Wow6432Node\\\\)?Zone\\ Labs\\\\ZoneAlarm$",
             ".*\\\\Software\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\App\\ Paths\\\\mbam.exe$",
-            ".*\\\\SYSTEM\\\\CurrentControlSet\\\\services\\\\Avg\\\\SystemValues$"
+            ".*\\\\SYSTEM\\\\(CurrentControlSet|ControlSet001)\\\\services\\\\Avg.*",
+            ".*\\\\SYSTEM\\\\(CurrentControlSet|ControlSet001)\\\\services\\\\AVP.*",
+            ".*\\\\SYSTEM\\\\(CurrentControlSet|ControlSet001)\\\\services\\\\avast!\\ Antivirus.*",
+            ".*\\\\SYSTEM\\\\(CurrentControlSet|ControlSet001)\\\\services\\\\RsMgrSvc.*",
+            ".*\\\\SYSTEM\\\\(CurrentControlSet|ControlSet001)\\\\services\\\\fshoster.*",
+            ".*\\\\SYSTEM\\\\(CurrentControlSet|ControlSet001)\\\\services\\\\cmdvirth.*",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\AVG_UI$",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\AVP$",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\mcui_exe$",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\mcpltui_exe$",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\Bdagent$",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\Trend\\ Micro\\ Titanium$",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\Trend\\ Micro\\ Client\\ Framework$",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\avast$",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\MSC$",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\BullGuard$",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\Sophos\\ AutoUpdate\\ Monitor$",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\SpIDerAgent$",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\APVXDWIN$",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\WRSVC$",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\emsisoft\\ anti-malware$",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\ISTray$",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\G\\ Data\\ AntiVirus\\ Tray.*",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\ZoneAlarm$",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\Bkav$",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\V3\\ Application$",
+            ".*\\\\SOFTWARE\\\\(Wow6432Node\\\\)?Microsoft\\\\Windows\\\\CurrentVersion\\\\Run\\\\Baidu\\ Antivirus$",
         ]
         found = False
         for indicator in reg_indicators:

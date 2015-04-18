@@ -94,7 +94,7 @@ class Dridex_APIs(Signature):
                     if clen:
                         length = int(clen.group(1))
                         if length > 100000:
-                            if self.sockmon[socknum] == self.payloadip["send"]:
+                            if "send" in self.payloadip and self.sockmon[socknum] == self.payloadip["send"]:
                                 # Just a sanity check to make sure the IP hasn't changed
                                 # since this is a primitive send/recv monitor
                                 self.payloadip["recv"] = self.sockmon[socknum]
@@ -118,11 +118,11 @@ class Dridex_APIs(Signature):
                                 payload = sfile["file_info"]["path"]
                                 decoder = DridexDecode_v1()
                                 decoded = decoder.run(payload)
+                                if decoded:
+                                    # We got the IPs :)
+                                    for ip in decoded:
+                                        self.data.append({"ioc": ip})
                                 break
 
-        if decoded:
-            # We got the IPs :)
-            for ip in decoded:
-                self.data.append({"ioc": ip})
 
         return ret
