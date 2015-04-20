@@ -7,8 +7,16 @@ from lib.cuckoo.common.abstracts import Feed
 class AbuseCH_SSL(Feed):
     # Results dict key value / exception handling / logging name
     name = "Bad_SSL_Certs"
+<<<<<<< HEAD
 
     def __init__(self):
+=======
+    # Change the below line to enable this feed
+    enabled = False
+
+    def __init__(self):
+        Feed.__init__(self)
+>>>>>>> 70ca2e28ca24083f9b3057c25b0db671b9b1e148
         # Location of the feed to be fetched
         self.downloadurl = "https://sslbl.abuse.ch/downloads/ssl_extended.csv"
         # Used in creating the file path on disk
