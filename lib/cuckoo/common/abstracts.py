@@ -5,11 +5,8 @@
 import os
 import re
 import requests
-<<<<<<< HEAD
-=======
 import datetime
 import threading
->>>>>>> 70ca2e28ca24083f9b3057c25b0db671b9b1e148
 import logging
 import time
 
