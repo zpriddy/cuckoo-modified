@@ -13,7 +13,10 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import re
+try:
+    import re2 as re
+except ImportError:
+    import re
 
 from lib.cuckoo.common.abstracts import Signature
 
@@ -38,7 +41,7 @@ class BrowserStealer(Signature):
         re.compile(".*\\\\Mozilla\\\\Firefox\\\\Profiles\\\\.*\\\\.default\\\\key3\.db$", re.I),
         re.compile(".*\\\\History\\\\History\.IE5\\\\index\.dat$", re.I),
         re.compile(".*\\\\Cookies\\\\.*", re.I),
-        re.compile(".*\\\\Temporary\\\\ Internet\\ Files\\\\Content\.IE5\\\\index\.dat$", re.I),
+        re.compile(".*\\\\Temporary\\ Internet\\ Files\\\\Content\.IE5\\\\index\.dat$", re.I),
         re.compile(".*\\\\Application\\ Data\\\\Google\\\\Chrome\\\\.*", re.I),
         re.compile(".*\\\\Application\\ Data\\\\Mozilla\\\\Firefox\\\\.*", re.I),
         re.compile(".*\\\\Application\\ Data\\\\Opera\\\\.*", re.I),
