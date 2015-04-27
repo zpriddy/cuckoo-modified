@@ -3,7 +3,12 @@
 # See the file 'docs/LICENSE' for copying permission.
 
 import sys
-import re
+
+try:
+    import re2 as re
+except ImportError:
+    import re
+
 import os
 import json
 
@@ -438,6 +443,8 @@ def search(request):
                 records = results_db.analysis.find({"target.file.crc32": value}).sort([["_id", -1]])
             elif term == "file":
                 records = results_db.analysis.find({"behavior.summary.files": {"$regex": value, "$options": "-i"}}).sort([["_id", -1]])
+            elif term == "command":
+                records = results_db.analysis.find({"behavior.summary.executed_commands": {"$regex": value, "$options": "-i"}}).sort([["_id", -1]])
             elif term == "key":
                 records = results_db.analysis.find({"behavior.summary.keys": {"$regex": value, "$options": "-i"}}).sort([["_id", -1]])
             elif term == "mutex":
@@ -455,11 +462,11 @@ def search(request):
             elif term == "imphash":
                 records = results_db.analysis.find({"static.pe_imphash": value}).sort([["_id", -1]])
             elif term == "surialert":
-                records = results_db.analysis.find({"suricata.alerts": {"$regex" : value, "$options" : "-1"}}).sort([["_id", -1]])
+                records = results_db.analysis.find({"suricata.alerts.signature": {"$regex" : value, "$options" : "-i"}}).sort([["_id", -1]])
             elif term == "surihttp":
-                records = results_db.analysis.find({"suricata.http": {"$regex" : value, "$options" : "-1"}}).sort([["_id", -1]])
+                records = results_db.analysis.find({"suricata.http": {"$regex" : value, "$options" : "-i"}}).sort([["_id", -1]])
             elif term == "suritls":
-                records = results_db.analysis.find({"suricata.tls": {"$regex" : value, "$options" : "-1"}}).sort([["_id", -1]])
+                records = results_db.analysis.find({"suricata.tls": {"$regex" : value, "$options" : "-i"}}).sort([["_id", -1]])
             elif term == "clamav":
                 records = results_db.analysis.find({"target.file.clamav": {"$regex": value, "$options": "-i"}}).sort([["_id", -1]])
             elif term == "yaraname":
