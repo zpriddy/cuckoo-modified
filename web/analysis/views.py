@@ -369,6 +369,32 @@ def file(request, category, object_id):
                                   context_instance=RequestContext(request))
 
 @require_safe
+def procdump(request, object_id, task_id, process_id, start, end):
+    analysis = results_db.analysis.find_one({"info.id": int(task_id)}, sort=[("_id", pymongo.DESCENDING)])
+
+    file_item = fs.get(ObjectId(object_id))
+    file_name = "{0}_{1:x}.dmp".format(process_id, int(start, 16))
+
+    if file_item and analysis and "procmemory" in analysis:
+        for proc in analysis["procmemory"]:
+            if proc["pid"] == int(process_id):
+                data = ""
+                for memmap in proc["address_space"]:
+                    for chunk in memmap["chunks"]:
+                        if int(chunk["start"], 16) >= int(start, 16) and int(chunk["end"], 16) <= int(end, 16):
+                            file_item.seek(chunk["offset"])
+                            data += file_item.read(int(chunk["size"], 16))
+                if len(data):
+                    content_type = "application/octet-stream"
+                    response = HttpResponse(data, content_type=content_type)
+                    response["Content-Disposition"] = "attachment; filename={0}".format(file_name)
+                    return response
+
+    return render_to_response("error.html",
+                                  {"error": "File not found"},
+                                  context_instance=RequestContext(request))
+
+@require_safe
 def filereport(request, task_id, category):
     formats = {
         "json": "report.json",
