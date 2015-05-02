@@ -1,4 +1,4 @@
-# Copyright (C) 2015 KillerInstinct
+# Copyright (C) 2015 Accuvant, Inc. (bspengler@accuvant.com)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,27 +15,18 @@
 
 from lib.cuckoo.common.abstracts import Signature
 
-class VMwareDetectMutexs(Signature):
-    name = "antivm_vmware_mutexes"
-    description = "Attempts to detect VMware using known mutexes"
+class WineDetectFunc(Signature):
+    name = "antiemu_wine_func"
+    description = "Detects the presence of Wine emulator via function name"
     severity = 3
-    categories = ["antivm"]
-    authors = ["KillerInstinct"]
-    minimum = "0.5"
+    categories = ["anti-emulation"]
+    authors = ["Accuvant"]
+    minimum = "1.0"
+    evented = True
 
-    def run(self):
-        ret = False
-        indicators = [
-            ".*VMwareGuestDnDDataMutex$",
-            ".*VMwareGuestCopyPasteMutex$",
-            ".*VMToolsHookQueueLock$",
-            ".*HGFSMUTEX.*",
-        ]
+    filter_apinames = set(["LdrGetProcedureAddress"])
 
-        for indicator in indicators:
-            match = self.check_mutex(pattern=indicator, regex=True)
-            if match:
-                self.data.append({"mutex": match})
-                ret = True
-
-        return ret
+    def on_call(self, call, process):
+        funcname = self.get_argument(call, "FunctionName")
+        if not call["status"] and funcname == "wine_get_unix_file_name":
+            return True

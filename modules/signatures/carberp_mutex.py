@@ -1,4 +1,4 @@
-# Copyright (C) 2014 Accuvant, Inc. (bspengler@accuvant.com)
+# Copyright (C) 2015 KillerInstinct
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,18 +15,17 @@
 
 from lib.cuckoo.common.abstracts import Signature
 
-class SandboxieDetectLibs(Signature):
-    name = "antivm_sboxie_libs"
-    description = "Detects Sandboxie through the presence of a library"
+class CarberpMutexes(Signature):
+    name = "carberp_mutex"
+    description = "Attempts to create a known Carberp/Rovnix mutex."
     severity = 3
-    categories = ["anti-vm"]
-    authors = ["Accuvant"]
-    minimum = "1.2"
-    evented = True
+    categories = ["banker", "trojan", "rootkit"]
+    families = ["carberp"]
+    authors = ["KillerInstinct"]
+    minimum = "0.5"
 
-    filter_apinames = set(["LdrLoadDll"])
-
-    def on_call(self, call, process):
-        dllname = self.get_argument(call, "FileName")
-        if "sbiedll.dll" in dllname.lower():
+    def run(self):
+        if self.check_mutex(pattern="^(Global\\\\)?(UAC|INS|BD)NTFS\d+$", regex=True):
             return True
+
+        return False

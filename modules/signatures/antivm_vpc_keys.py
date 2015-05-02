@@ -1,4 +1,4 @@
-# Copyright (C) 2012 Claudio "nex" Guarnieri (@botherder)
+# Copyright (C) 2015 Accuvant, Inc. (bspengler@accuvant.com)
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,14 +15,13 @@
 
 from lib.cuckoo.common.abstracts import Signature
 
-class AntiVMIDE(Signature):
-    name = "antivm_generic_ide"
-    description = "Checks the presence of IDE drives in the registry, possibly for anti-virtualization"
+class VPCDetectKeys(Signature):
+    name = "antivm_vpc_keys"
+    description = "Detects Virtual PC through the presence of a registry key"
     severity = 3
     categories = ["anti-vm"]
-    authors = ["nex"]
-    minimum = "0.5"
+    authors = ["Accuvant"]
+    minimum = "1.2"
 
     def run(self):
-        return self.check_key(pattern=".*\\\\SYSTEM\\\\(CurrentControlSet|ControlSet001)\\\\Enum\\\\IDE$",
-                              regex=True)
+        return self.check_key(pattern=".*\\\\SYSTEM\\\\(CurrentControlSet|ControlSet001)\\\\Services\\\\vpc-s3$", regex=True)
